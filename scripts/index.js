@@ -11,7 +11,7 @@ cardElement.querySelector('.card__image').src = card.link;
 cardElement.querySelector('.card__image').alt = card.alt;
 cardElement.querySelector('.card__title').textContent = card.name;
 const removeCard = cardElement.querySelector('.card__delete-button');
-removeCard.addEventListener('click', function(){
+deleteCard.addEventListener('click', function(){
     removeCard(card)});
 return cardElement;
 }
@@ -20,6 +20,3 @@ return cardElement;
 
 
 // @todo: Вывести карточки на страницу
-initialCards.forEach((card) => {
-    renderCard(createCard('.card'))
-})
