@@ -13,7 +13,7 @@ const popupCloseButtons = document.querySelectorAll(".popup__close");
 const profileEditPopup = document.querySelector(".popup_type_edit");
 const newCardPopup = document.querySelector(".popup_type_new-card");
 
-const PopupForm = document.querySelector(".popup__form");
+const profileForm = profileEditPopup.querySelector(".popup__form");
 
 const profileNameInput = document.querySelector(".popup__input_type_name");
 const profileDescriptionInput = document.querySelector(".popup__input_type_description");
@@ -81,13 +81,7 @@ function openImage(link, name) {
 }
 
 // Обработчик «отправки» формы
-function handleFormSubmit(
-  evt,
-  profileNameInput,
-  profileDescriptionInput,
-  profileName,
-  profileDescription
-) {
+function handleProfileFormSubmit(evt) {
   evt.preventDefault();
   const nameValue = profileNameInput.value;
   const jobValue = profileDescriptionInput.value;
@@ -107,9 +101,7 @@ popups.forEach((popup) => {
   });
 });
 
-PopupForm.addEventListener("submit", (evt) => {
-  handleFormSubmit(evt, profileNameInput, profileDescriptionInput, profileName, profileDescription);
-});
+profileForm.addEventListener("submit", handleProfileFormSubmit);
 
 profileAddButton.addEventListener("click", () => {
   openPopup(newCardPopup);
