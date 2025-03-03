@@ -3,6 +3,7 @@ import "./pages/index.css";
 import { initialCards } from "./scripts/cards.js";
 import { createCard, deleteCard, likeCard } from "./components/card.js";
 import { openPopup, closePopup } from "./components/modal.js";
+import { enableValidation, validationConfig } from "./components/validation.js";
 
 // @todo: DOM узлы
 const placesList = document.querySelector(".places__list");
@@ -10,10 +11,10 @@ const placesList = document.querySelector(".places__list");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const profileAddButton = document.querySelector(".profile__add-button");
 const popupCloseButtons = document.querySelectorAll(".popup__close");
+
 const profileEditPopup = document.querySelector(".popup_type_edit");
 const newCardPopup = document.querySelector(".popup_type_new-card");
-
-const profileForm = profileEditPopup.querySelector(".popup__form");
+const formElement = profileEditPopup.querySelector(".popup__form");
 
 const profileNameInput = document.querySelector(".popup__input_type_name");
 const profileDescriptionInput = document.querySelector(".popup__input_type_description");
@@ -32,6 +33,7 @@ const popupCaption = document.querySelector(".popup__caption");
 const imagePopup = document.querySelector(".popup_type_image");
 
 const popups = document.querySelectorAll(".popup");
+
 
 // @todo: Вывести карточки на страницу
 initialCards.forEach((element) => {
@@ -92,7 +94,6 @@ function handleProfileFormSubmit(evt) {
 }
 
 // Закрытие попапа через оверлей
-
 popups.forEach((popup) => {
   popup.addEventListener("click", (e) => {
     if (e.target === popup) {
@@ -101,8 +102,11 @@ popups.forEach((popup) => {
   });
 });
 
-profileForm.addEventListener("submit", handleProfileFormSubmit);
+formElement.addEventListener("submit", handleProfileFormSubmit);
 
 profileAddButton.addEventListener("click", () => {
   openPopup(newCardPopup);
 });
+
+//Валидация
+enableValidation(validationConfig);
