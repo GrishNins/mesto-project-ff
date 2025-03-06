@@ -4,6 +4,8 @@ import { initialCards } from "./scripts/cards.js";
 import { createCard, deleteCard, likeCard } from "./components/card.js";
 import { openPopup, closePopup } from "./components/modal.js";
 import { enableValidation, validationConfig } from "./components/validation.js";
+import { getUserMe } from "./components/api.js";
+import { data } from "jquery";
 
 // @todo: DOM узлы
 const placesList = document.querySelector(".places__list");
@@ -27,6 +29,7 @@ const placeLinkInput = newPlaceForm.querySelector(".popup__input_type_url");
 
 const profileName = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const profileImage = document.querySelector("profile__image");
 
 const popupImage = document.querySelector(".popup__image");
 const popupCaption = document.querySelector(".popup__caption");
@@ -110,3 +113,15 @@ profileAddButton.addEventListener("click", () => {
 
 //Валидация
 enableValidation(validationConfig);
+
+//API
+
+  getUserMe()
+  .then((userData) => {
+      profileName.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      profileImage.src = userData.avatar;
+  })
+  .catch((err) => {
+      console.error('Ошибка при загрузке данных пользователя:', err);
+  });
