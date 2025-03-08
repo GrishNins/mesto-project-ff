@@ -24,3 +24,47 @@ export const getUserMe =() => {
     .then(getResponseData);
   }
 
+  //карточки с сервера
+  export const getInitialCards = () => {
+    return fetch(`${config.baseUrl}/cards`, {
+      method: 'GET',
+      headers: config.headers
+    })
+    .then(getResponseData);
+  };
+
+//редактирование профиля
+export const editProfile = (name, about) => {
+    return fetch(`${config.baseUrl}/users/me`, {
+      method: 'PATCH',
+      headers: config.headers,
+      body: JSON.stringify({
+        name: name,
+        about: about 
+      })
+    })
+    .then(getResponseData);
+  };
+
+  // Добавление новой карточки на сервер
+  export const addNewCard = (name, link) => {
+    return fetch(`${config.baseUrl}/cards`, {
+      method: 'POST',
+      headers: config.headers,
+      body: JSON.stringify({
+        name: name, 
+        link: link
+      })
+    })
+    .then(getResponseData);
+};
+
+//Удаление своей карточки
+// Удаление карточки с сервера
+export const deleteIdCard= (cardId) => {
+    return fetch(`${config.baseUrl}/cards/${cardId}`, {
+      method: 'DELETE',
+      headers: config.headers
+    })
+    .then(getResponseData);
+};
