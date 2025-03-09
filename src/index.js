@@ -2,7 +2,7 @@ import "./pages/index.css";
 import { createCard, likeCard } from "./components/card.js";
 import { openPopup, closePopup } from "./components/modal.js";
 import { enableValidation, validationConfig } from "./components/validation.js";
-import { getUserMe, getInitialCards, editProfile, addNewCard, deleteIdCard, addLikeCard, dislikeCard } from "./components/api.js";
+import { getUserMe, getInitialCards, editProfile, addNewCard, deleteIdCard, addLikeCard, dislikeCard, newAvatar } from "./components/api.js";
 
 // DOM-элементы
 const placesList = document.querySelector(".places__list");
@@ -34,10 +34,13 @@ const popups = document.querySelectorAll(".popup");
 const confirmDeletePopup = document.querySelector(".popup_type_confirm");
 const confirmDeleteForm = document.querySelector('.popup__form[name="confirm-delete"]');
 
+const profileImageEditButton = document.querySelector('.profile__image_avatar_edit');
+const avatarEditPopup = document.querySelector('.popup_type_avatar');
+const avatarEditForm = document.querySelector('.popup__form[name="edit-avatar"]');
+const avatarUrlInput = document.querySelector('.popup__input_type_avatar-url');
+
 let userId = null;
 let cardToDelete = null;
-
-
 
 // Функция открытия попапа редактирования профиля
 profileEditButton.addEventListener("click", () => {
@@ -179,3 +182,33 @@ Promise.all([getUserMe(), getInitialCards()])
   .catch((err) => {
     console.error('Ошибка при загрузке данных:', err);
   });
+
+// Обработчик открытия попапа редактирования аватара
+profileImageEditButton.addEventListener('click', () => {
+  openPopup(avatarEditPopup);
+});
+
+// Обработчик отправки формы редактирования аватара
+avatarEditForm.addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  const avatarUrl = avatarUrlInput.value;
+
+  if (avatarUrl) {
+    const submitButton = avatarEditForm.querySelector('.popup__button');
+    submitButton.textContent = 'Сохранение...';
+
+    newAvatar(avatarUrl)
+      .then((userData) => {
+        profileImage.src = userData.avatar;
+        closePopup(avatarEditPopup);
+        avatarEditForm.reset();
+      })
+      .catch((err) => {
+        console.error('Ошибка при обновлении аватара:', err);
+      })
+      .finally(() => {
+        submitButton.textContent = 'Сохранить';
+      });
+  }
+});

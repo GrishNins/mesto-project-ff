@@ -1,8 +1,8 @@
 .profile__image_avatar_edit {
   width: 120px;
   height: 120px;
-  border-radius: 50%;
-  background-image: url('https://sun9-63.userapi.com/impg/gugROcwBMLxS2WIXHDBDsD9xjPlGjEehZMl4Ig/Z8WJ7MISnig.jpg?size=1620x2160&quality=95&sign=8846b2bc0ea8d62d22d11416ddc140e8&type=album');
+  border-radius: 50%; 
+  background-image:url('./src/images/avatar.jpg');
   background-size: cover;
   background-position: center;
   border: none;
