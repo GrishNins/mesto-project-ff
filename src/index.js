@@ -1,115 +1,116 @@
-import "./pages/index.css"; // Импорт стилей
-import { createCard, deleteCard, likeCard } from "./components/card.js"; // Функции для работы с карточками
-import { openPopup, closePopup } from "./components/modal.js"; // Функции для работы с попапами
-import { enableValidation, validationConfig } from "./components/validation.js"; // Валидация форм
-import { getUserMe, getInitialCards, editProfile, addNewCard, deleteIdCard } from "./components/api.js"; // API-функции
+import "./pages/index.css";
+import { createCard, likeCard } from "./components/card.js";
+import { openPopup, closePopup } from "./components/modal.js";
+import { enableValidation, validationConfig } from "./components/validation.js";
+import { getUserMe, getInitialCards, editProfile, addNewCard, deleteIdCard, addLikeCard, dislikeCard } from "./components/api.js";
 
 // DOM-элементы
-const placesList = document.querySelector(".places__list"); // Список карточек
-const profileEditButton = document.querySelector(".profile__edit-button"); // Кнопка редактирования профиля
-const profileAddButton = document.querySelector(".profile__add-button"); // Кнопка добавления карточки
-const popupCloseButtons = document.querySelectorAll(".popup__close"); // Кнопки закрытия попапов
+const placesList = document.querySelector(".places__list");
+const profileEditButton = document.querySelector(".profile__edit-button");
+const profileAddButton = document.querySelector(".profile__add-button");
+const popupCloseButtons = document.querySelectorAll(".popup__close");
 
-const profileEditPopup = document.querySelector(".popup_type_edit"); // Попап редактирования профиля
-const newCardPopup = document.querySelector(".popup_type_new-card"); // Попап добавления карточки
-const formElement = profileEditPopup.querySelector(".popup__form"); // Форма редактирования профиля
+const profileEditPopup = document.querySelector(".popup_type_edit");
+const newCardPopup = document.querySelector(".popup_type_new-card");
+const formElement = profileEditPopup.querySelector(".popup__form");
 
-const profileNameInput = document.querySelector(".popup__input_type_name"); // Поле ввода имени
-const profileDescriptionInput = document.querySelector(".popup__input_type_description"); // Поле ввода описания
+const profileNameInput = document.querySelector(".popup__input_type_name");
+const profileDescriptionInput = document.querySelector(".popup__input_type_description");
 
-const newPlaceForm = document.querySelector('.popup__form[name="new-place"]'); // Форма добавления карточки
-const placeNameInput = newPlaceForm.querySelector(".popup__input_type_card-name"); // Поле ввода названия карточки
-const placeLinkInput = newPlaceForm.querySelector(".popup__input_type_url"); // Поле ввода ссылки на картинку
+const newPlaceForm = document.querySelector('.popup__form[name="new-place"]');
+const placeNameInput = newPlaceForm.querySelector(".popup__input_type_card-name");
+const placeLinkInput = newPlaceForm.querySelector(".popup__input_type_url");
 
-const profileName = document.querySelector(".profile__title"); // Имя профиля
-const profileDescription = document.querySelector(".profile__description"); // Описание профиля
-const profileImage = document.querySelector(".profile__image"); // Аватар профиля
+const profileName = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
+const profileImage = document.querySelector(".profile__image");
 
-const popupImage = document.querySelector(".popup__image"); // Изображение в попапе
-const popupCaption = document.querySelector(".popup__caption"); // Подпись к изображению
-const imagePopup = document.querySelector(".popup_type_image"); // Попап с изображением
+const popupImage = document.querySelector(".popup__image");
+const popupCaption = document.querySelector(".popup__caption");
+const imagePopup = document.querySelector(".popup_type_image");
 
-const popups = document.querySelectorAll(".popup"); // Все попапы
+const popups = document.querySelectorAll(".popup");
 
-let userId = '4d951f7a0171ebece758d4f9';
+const confirmDeletePopup = document.querySelector(".popup_type_confirm");
+const confirmDeleteForm = document.querySelector('.popup__form[name="confirm-delete"]');
+
+let userId = null;
+let cardToDelete = null;
 
 // Функция открытия попапа редактирования профиля
 profileEditButton.addEventListener("click", () => {
-  profileNameInput.value = profileName.textContent; // Заполняем поля текущими данными
+  profileNameInput.value = profileName.textContent;
   profileDescriptionInput.value = profileDescription.textContent;
-  openPopup(profileEditPopup); // Открываем попап
+  openPopup(profileEditPopup);
 });
 
 // Функция закрытия попапов
 popupCloseButtons.forEach((button) => {
   button.addEventListener("click", (e) => {
-    const popup = e.target.closest(".popup"); // Находим ближайший попап
-    closePopup(popup); // Закрываем его
+    const popup = e.target.closest(".popup");
+    closePopup(popup);
   });
 });
 
 // Функция добавления новой карточки
 newPlaceForm.addEventListener("submit", function (event) {
-  event.preventDefault(); // Отменяем стандартное поведение формы
+  event.preventDefault();
 
-  const name = placeNameInput.value; // Название карточки
-  const link = placeLinkInput.value; // Ссылка на картинку
+  const name = placeNameInput.value;
+  const link = placeLinkInput.value;
 
   if (name && link) {
-    const submitButton = newPlaceForm.querySelector('.popup__button'); // Кнопка отправки
-    submitButton.textContent = 'Сохранение...'; // Меняем текст кнопки
+    const submitButton = newPlaceForm.querySelector('.popup__button');
+    submitButton.textContent = 'Сохранение...';
 
-    // Отправляем данные на сервер
     addNewCard(name, link)
       .then((cardData) => {
-        // Создаем новую карточку и добавляем её на страницу
-        const newCard = createCard(cardData, deleteCard, likeCard, openImage, userId);
-        placesList.prepend(newCard); // Добавляем карточку в начало списка
+        const newCard = createCard(cardData, openConfirmDeletePopup, likeCard, openImage, userId);
+        placesList.prepend(newCard);
 
-        closePopup(newCardPopup); // Закрываем попап
-        newPlaceForm.reset(); // Сбрасываем форму
+        closePopup(newCardPopup);
+        newPlaceForm.reset();
       })
       .catch((err) => {
-        console.error('Ошибка при добавлении карточки:', err); // Логируем ошибку
+        console.error('Ошибка при добавлении карточки:', err);
       })
       .finally(() => {
-        submitButton.textContent = 'Сохранить'; // Возвращаем текст кнопки
+        submitButton.textContent = 'Сохранить';
       });
   }
 });
 
 // Функция открытия изображения
 function openImage(link, name) {
-  popupImage.src = link; // Устанавливаем ссылку на изображение
-  popupImage.alt = name; // Устанавливаем альтернативный текст
-  popupCaption.textContent = name; // Устанавливаем подпись
-  openPopup(imagePopup); // Открываем попап
+  popupImage.src = link;
+  popupImage.alt = name;
+  popupCaption.textContent = name;
+  openPopup(imagePopup);
 }
 
 // Функция редактирования профиля
 function handleEditProfileSubmit(evt) {
-  evt.preventDefault(); 
+  evt.preventDefault();
 
   const nameValue = profileNameInput.value;
   const aboutValue = profileDescriptionInput.value;
 
-  const submitButton = formElement.querySelector('.popup__button'); 
-  submitButton.textContent = 'Сохранение...'; 
+  const submitButton = formElement.querySelector('.popup__button');
+  submitButton.textContent = 'Сохранение...';
 
-  // Отправляем данные на сервер
   editProfile(nameValue, aboutValue)
     .then((userData) => {
-      // Обновляем данные на странице
       profileName.textContent = userData.name;
       profileDescription.textContent = userData.about;
+      profileImage.src = userData.avatar; 
 
-      closePopup(profileEditPopup); // Закрываем попап
+      closePopup(profileEditPopup);
     })
     .catch((err) => {
-      console.error('Ошибка при обновлении профиля:', err); 
+      console.error('Ошибка при обновлении профиля:', err);
     })
     .finally(() => {
-      submitButton.textContent = 'Сохранить'; 
+      submitButton.textContent = 'Сохранить';
     });
 }
 
@@ -117,7 +118,7 @@ function handleEditProfileSubmit(evt) {
 popups.forEach((popup) => {
   popup.addEventListener("click", (e) => {
     if (e.target === popup) {
-      closePopup(popup); // Закрываем попап
+      closePopup(popup);
     }
   });
 });
@@ -130,26 +131,49 @@ profileAddButton.addEventListener("click", () => {
   openPopup(newCardPopup);
 });
 
+// Функция для открытия попапа подтверждения удаления
+function openConfirmDeletePopup(cardElement, cardId) {
+  cardToDelete = { cardElement, cardId };
+  openPopup(confirmDeletePopup);
+}
+
+// Обработчик подтверждения удаления карточки
+confirmDeleteForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+  if (cardToDelete) {
+    const { cardElement, cardId } = cardToDelete;
+
+    deleteIdCard(cardId)
+      .then(() => {
+        cardElement.remove();
+        closePopup(confirmDeletePopup);
+      })
+      .catch((err) => {
+        console.error('Ошибка при удалении карточки:', err);
+      })
+      .finally(() => {
+        cardToDelete = null;
+      });
+  }
+});
+
 // Включение валидации форм
 enableValidation(validationConfig);
 
 // Загрузка данных пользователя и карточек с сервера
 Promise.all([getUserMe(), getInitialCards()])
   .then(([userData, cardsData]) => {
-    // Устанавливаем данные пользователя
     profileName.textContent = userData.name;
     profileDescription.textContent = userData.about;
     profileImage.src = userData.avatar;
 
-    // Сохраняем ID пользователя
     userId = userData._id;
 
-    // Отображаем карточки на странице
     cardsData.forEach((card) => {
-      const newCard = createCard(card, deleteCard, likeCard, openImage, userId);
+      const newCard = createCard(card, openConfirmDeletePopup, likeCard, openImage, userId);
       placesList.append(newCard);
     });
   })
   .catch((err) => {
-    console.error('Ошибка при загрузке данных:', err); // Логируем ошибку
+    console.error('Ошибка при загрузке данных:', err);
   });
