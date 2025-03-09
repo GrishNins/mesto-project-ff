@@ -37,6 +37,8 @@ const confirmDeleteForm = document.querySelector('.popup__form[name="confirm-del
 let userId = null;
 let cardToDelete = null;
 
+
+
 // Функция открытия попапа редактирования профиля
 profileEditButton.addEventListener("click", () => {
   profileNameInput.value = profileName.textContent;

@@ -13,6 +13,7 @@ const config = {
     return res.json();
   }
   
+  //Загружаем информацию о пользователе
   export const getUserMe = () => {
     return fetch(`${config.baseUrl}/users/me`, {
       method: 'GET',
@@ -21,6 +22,7 @@ const config = {
     .then(getResponseData);
   }
   
+  //Загружаем карточки с сервера
   export const getInitialCards = () => {
     return fetch(`${config.baseUrl}/cards`, {
       method: 'GET',
@@ -29,6 +31,7 @@ const config = {
     .then(getResponseData);
   };
   
+  //Редактируем профиль
   export const editProfile = (name, about) => {
     return fetch(`${config.baseUrl}/users/me`, {
       method: 'PATCH',
@@ -41,6 +44,7 @@ const config = {
     .then(getResponseData);
   };
   
+  //Добавляем карточку
   export const addNewCard = (name, link) => {
     return fetch(`${config.baseUrl}/cards`, {
       method: 'POST',
@@ -53,6 +57,7 @@ const config = {
     .then(getResponseData);
   };
   
+  //Удвляем свою карточку
   export const deleteIdCard = (cardId) => {
     return fetch(`${config.baseUrl}/cards/${cardId}`, {
       method: 'DELETE',
@@ -61,6 +66,7 @@ const config = {
     .then(getResponseData);
   };
   
+  //Добавляем лайки
   export const addLikeCard = (cardId) => {
     return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
       method: 'PUT',
@@ -69,6 +75,7 @@ const config = {
     .then(getResponseData);
   };
   
+  //Убираем лайки
   export const dislikeCard = (cardId) => {
     return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
       method: 'DELETE',
@@ -78,9 +85,13 @@ const config = {
   };
 
 //Редактирование аватарки
-export const newAvatar = (cardId) => {
+export const newAvatar = (avatarUrl) => {
     return fetch(`${config.baseUrl}/users/me/avatar`, {
         method: "PATCH",
         headers: config.headers,
+        body: JSON.stringify({
+            avatar: avatarUrl
+        }),
     })
-}
+    .then(getResponseData);
+};
