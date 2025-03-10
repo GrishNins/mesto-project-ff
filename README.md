@@ -1,2 +1,2 @@
 # Проектная работа Mesto:
-https://github.com/GrishNins/mesto-project-ff.git
+https://grishnins.github.io/mesto-project-ff/
