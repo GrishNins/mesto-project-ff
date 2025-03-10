@@ -23,7 +23,7 @@ const placeLinkInput = newPlaceForm.querySelector(".popup__input_type_url");
 
 const profileName = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
-const profileImage = document.querySelector(".profile__image");
+const profileImage = document.querySelector(".profile__image img");
 
 const popupImage = document.querySelector(".popup__image");
 const popupCaption = document.querySelector(".popup__caption");
