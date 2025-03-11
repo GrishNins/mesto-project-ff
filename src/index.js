@@ -1,8 +1,8 @@
 import "./pages/index.css";
 import { createCard, likeCard } from "./components/card.js";
 import { openPopup, closePopup } from "./components/modal.js";
-import { enableValidation, validationConfig } from "./components/validation.js";
-import { getUserMe, getInitialCards, editProfile, addNewCard, deleteIdCard, addLikeCard, dislikeCard, newAvatar } from "./components/api.js";
+import { enableValidation } from "./components/validation.js";
+import { getUserMe, getInitialCards, editProfile, addNewCard, deleteIdCard, newAvatar } from "./components/api.js";
 
 // DOM-элементы
 const placesList = document.querySelector(".places__list");
@@ -61,28 +61,26 @@ popupCloseButtons.forEach((button) => {
 newPlaceForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
+  const submitButton = newPlaceForm.querySelector('.popup__button');
+  submitButton.textContent = 'Сохранение...';
+
   const name = placeNameInput.value;
   const link = placeLinkInput.value;
 
-  if (name && link) {
-    const submitButton = newPlaceForm.querySelector('.popup__button');
-    submitButton.textContent = 'Сохранение...';
+  addNewCard(name, link)
+    .then((cardData) => {
+      const newCard = createCard(cardData, openConfirmDeletePopup, likeCard, openImage, userId);
+      placesList.prepend(newCard);
 
-    addNewCard(name, link)
-      .then((cardData) => {
-        const newCard = createCard(cardData, openConfirmDeletePopup, likeCard, openImage, userId);
-        placesList.prepend(newCard);
-
-        closePopup(newCardPopup);
-        newPlaceForm.reset();
-      })
-      .catch((err) => {
-        console.error('Ошибка при добавлении карточки:', err);
-      })
-      .finally(() => {
-        submitButton.textContent = 'Сохранить';
-      });
-  }
+      closePopup(newCardPopup);
+      newPlaceForm.reset();
+    })
+    .catch((err) => {
+      console.error('Ошибка при добавлении карточки:', err);
+    })
+    .finally(() => {
+      submitButton.textContent = 'Сохранить';
+    });
 });
 
 // Функция открытия изображения
@@ -163,6 +161,15 @@ confirmDeleteForm.addEventListener("submit", function (event) {
 });
 
 // Включение валидации форм
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_inactive',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'form__input-error_active'
+}; 
+
 enableValidation(validationConfig);
 
 // Загрузка данных пользователя и карточек с сервера

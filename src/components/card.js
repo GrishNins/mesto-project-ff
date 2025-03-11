@@ -1,5 +1,4 @@
-import { openPopup } from "./modal.js";
-import { addLikeCard, dislikeCard, deleteIdCard } from "./api.js";
+import { addLikeCard, dislikeCard } from "./api.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -36,24 +35,13 @@ export function createCard(cardData, openConfirmDeletePopup, likeCard, openImage
 
 export function likeCard(likeButton, cardId, cardLikes) {
   const isLiked = likeButton.classList.contains("card__like-button_is-active");
+  const likeMethod = isLiked ? dislikeCard : addLikeCard;
 
-  if (isLiked) {
-    dislikeCard(cardId)
-      .then((updatedCard) => {
-        likeButton.classList.remove("card__like-button_is-active");
-        cardLikes.textContent = updatedCard.likes.length;
-      })
-      .catch((err) => {
-        console.error('Ошибка при снятии лайка:', err);
-      });
-  } else {
-    addLikeCard(cardId)
-      .then((updatedCard) => {
-        likeButton.classList.add("card__like-button_is-active");
-        cardLikes.textContent = updatedCard.likes.length;
-      })
-      .catch((err) => {
-        console.error('Ошибка при постановке лайка:', err);
-      });
-  }
+  likeMethod(cardId)
+    .then((updatedCard) => {
+      likeButton.classList.toggle("card__like-button_is-active");
+      cardLikes.textContent = updatedCard.likes.length;
+    })
+    .catch (err => console.log(err));
 }
+
